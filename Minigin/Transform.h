@@ -2,15 +2,26 @@
 #pragma warning(push)
 #pragma warning (disable:4201)
 #include <glm/vec3.hpp>
+#include <glm/mat3x3.hpp>
+#include "../Minigin/BaseComponent.h"
 #pragma warning(pop)
 
 namespace dae
 {
-	class Transform final
+	class Transform final : public BaseComponent
 	{
-		glm::vec3 mPosition;
+		glm::mat3x3 transform{1,0,0,
+							  0,1,0,
+							  0,0,1};
 	public:
-		const glm::vec3& GetPosition() const { return mPosition; }
-		void SetPosition(float x, float y, float z);
+		glm::vec2 GetPosition() const { return glm::vec2{transform[0][2],transform[1][2]} ; }
+		explicit Transform();
+		 ~Transform();
+		void Update() override
+		{
+			return;
+		};
+		void SetPosition(float x, float y);
+		void translate(float x, float y);
 	};
 }

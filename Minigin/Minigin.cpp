@@ -10,6 +10,7 @@
 #include "TextObject.h"
 #include "GameObject.h"
 #include "Scene.h"
+#include "MainMenuScene.h"
 
 
 void dae::Minigin::Initialize()
@@ -40,21 +41,10 @@ void dae::Minigin::Initialize()
  */
 void dae::Minigin::LoadGame() const
 {
-	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
-
-	auto go = std::make_shared<GameObject>();
-	go->SetTexture("background.jpg");
-	scene.Add(go);
-
-	go = std::make_shared<GameObject>();
-	go->SetTexture("logo.png");
-	go->SetPosition(216, 180);
-	scene.Add(go);
-
-	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto to = std::make_shared<TextObject>("Programming 4", font);
-	to->SetPosition(80, 20);
-	scene.Add(to);
+	//auto scene = std::make_shared<Sc>(MainMenuScene());
+	SceneManager::GetInstance().CreateScene(std::make_shared<MainMenuScene>());
+	SceneManager::GetInstance().SetActiveScene("MainMenu");
+	
 }
 
 void dae::Minigin::Cleanup()
@@ -75,21 +65,24 @@ void dae::Minigin::Run()
 	LoadGame();
 
 	{
-		auto t = std::chrono::high_resolution_clock::now();
+		
 		auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
 		auto& input = InputManager::GetInstance();
 
+		
 		bool doContinue = true;
+		auto lastTime = std::chrono::high_resolution_clock::now();
 		while (doContinue)
 		{
+			auto currentTime = std::chrono::high_resolution_clock::now();
+			//auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
 			doContinue = input.ProcessInput();
 
 			sceneManager.Update();
 			renderer.Render();
 
-			t += std::chrono::milliseconds(msPerFrame);
-			std::this_thread::sleep_until(t);
+			lastTime = currentTime;
 		}
 	}
 
