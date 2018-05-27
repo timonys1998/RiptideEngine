@@ -11,6 +11,8 @@
 #include "Scene.h"
 #include "MainMenuScene.h"
 #include "PacManSingleplayerScene.h"
+#include "PacManMultiplayerScene.h"
+#include "VersusScene.h"
 
 
 void Minigin::Initialize()
@@ -43,6 +45,8 @@ void Minigin::LoadGame() const
 {
 	SceneManager::GetInstance().CreateScene(std::make_shared<MainMenuScene>());
 	SceneManager::GetInstance().CreateScene(std::make_shared<PacManSingleplayerScene>());
+	SceneManager::GetInstance().CreateScene(std::make_shared<PacManMultiplayerScene>());
+	SceneManager::GetInstance().CreateScene(std::make_shared<VersusScene>());
 	SceneManager::GetInstance().SetActiveScene("MainMenu");
 }
 

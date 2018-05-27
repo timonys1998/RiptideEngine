@@ -3,11 +3,7 @@
 
 class Player : public GameObject
 {
-	enum ControlsType
-	{
-		KEYBOARD,
-		CONTROLLER
-	};
+	
 public:
 	enum Dir
 	{
@@ -16,19 +12,34 @@ public:
 		UP,
 		DOWN
 	};
+	enum ControlsType
+	{
+		KEYBOARD,
+		CONTROLLER
+	};
 	explicit Player(const glm::vec2& pos,const std::string texturePath,ControlsType controllerType = KEYBOARD);
 	virtual ~Player();
 
 	void Init() override;
 	Dir GetDirection()const { return  mDirection; }
 	void SetDirection(Dir direction);
-	void Move(glm::vec2 currentPos, glm::vec2 futurePos,float deltaTime);
+	void Move( glm::vec2 futurePos,float deltaTime);
+	void Die();
+
+	bool IsAlive()const { return mIsAlive; }
+	int GetLives()const { return mLives; }
 private:
-	
+	void Respawn();
+
+	glm::vec2 mCurrentPos;
+	glm::vec2 mFuturePos;
 	const std::string mTexturePath;
 	Dir mDirection = LEFT;
-	Dir mLastDirection;
+	
 	ControlsType mControllerType;
 	float mMoveTimer = 0.0f;
+	bool mGoToNext = true;
+	bool mIsAlive = true;;
+	int mLives = 3;
 };
 

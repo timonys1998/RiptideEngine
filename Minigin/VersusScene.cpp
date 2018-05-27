@@ -1,42 +1,30 @@
 #include "MiniginPCH.h"
-#include "PacManSingleplayerScene.h"
-#include "Grid.h"
-#include "RenderComponent.h"
+#include "VersusScene.h"
 #include "TextComponent.h"
+#include "RenderComponent.h"
 #include "FPSCalculatorComponent.h"
-#include "Player.h"
-#include "Ghost.h"
-#include "AIComponent.h"
 
 
-PacManSingleplayerScene::PacManSingleplayerScene()
-	:Scene("PacManSinglePlayer")
+VersusScene::VersusScene()
+	:Scene("VersusScene")
 {
 	Init();
 }
 
 
-PacManSingleplayerScene::~PacManSingleplayerScene()
+VersusScene::~VersusScene()
 {
 }
 
-void PacManSingleplayerScene::Init()
+void VersusScene::Init()
 {
-	mPacMan = std::make_shared<Player>(glm::vec2(320, 352),"SinglePacMan.png");
-	mGhost1 = std::make_shared<Ghost>(glm::vec2(320, 192), "Ghost.png");
-	mGhosts.push_back(mGhost1);
-	mGhost2 = std::make_shared<Ghost>(glm::vec2(288, 160), "Ghost.png");
-	mGhosts.push_back(mGhost2);
-	mGhost3 = std::make_shared<Ghost>(glm::vec2(320, 192), "Ghost.png");
-	mGhosts.push_back(mGhost3);
-	mGhost4 = std::make_shared<Ghost>(glm::vec2(288, 160), "Ghost.png");
-	mGhosts.push_back(mGhost4);
+	mPacMan = std::make_shared<Player>(glm::vec2(320, 352), "SinglePacMan.png");
+	mPlayerGhost = std::make_shared<Player>(glm::vec2(320, 192), "Ghost.png", Player::ControlsType::CONTROLLER);
+	
 	mGridObjects.push_back(mPacMan);
-	mGridObjects.push_back(mGhost1);
-	mGridObjects.push_back(mGhost2);
-	mGridObjects.push_back(mGhost3);
-	mGridObjects.push_back(mGhost4);
-	mGrid = std::make_shared<Grid>("level1.txt",640,mGridObjects);
+	mGridObjects.push_back(mPlayerGhost);
+	
+	mGrid = std::make_shared<Grid>("level1.txt", 640, mGridObjects);
 	Add(mGrid);
 
 	mFpsCounter = std::make_shared<GameObject>();
@@ -60,12 +48,10 @@ void PacManSingleplayerScene::Init()
 	mLifeCounter->AddComponent(std::make_shared<RenderComponent>(mLifeCounter->GetComponent<TextComponent>()->GetTexture()));
 	mLifeCounter->GetComponent<Transform>()->SetPosition(400.0f, 0.0f);
 	Add(mLifeCounter);
-
 }
 
-void PacManSingleplayerScene::SceneUpdate(float deltaTime)
+void VersusScene::SceneUpdate(float deltaTime)
 {
-	
 	mFPSIntervalCounter += deltaTime;
 	if (mFPSIntervalCounter >= mFPSTimeInterval) {
 		mFpsCounter->GetComponent<TextComponent>()->SetText(std::to_string(mFpsCounter->GetComponent<FPSCalculatorComponent>()->GetFps()));
@@ -79,13 +65,13 @@ void PacManSingleplayerScene::SceneUpdate(float deltaTime)
 	mLifeCounter->GetComponent<RenderComponent>()->ChangeRenderingTexture(mLifeCounter->GetComponent<TextComponent>()->GetTexture());
 
 	HandleGameState();
-	HandlePacMan(deltaTime);
-	HandleGhosts(deltaTime);
+	HandlePlayers(deltaTime);
 	CheckForDeath();
 }
 
-void PacManSingleplayerScene::HandlePacMan(float deltaTime)
+void VersusScene::HandlePlayers(float deltaTime)
 {
+	//PacMan 
 	auto pacDir = mPacMan->GetDirection();
 	std::shared_ptr<Tile> tile;
 	switch (pacDir)
@@ -119,86 +105,57 @@ void PacManSingleplayerScene::HandlePacMan(float deltaTime)
 		}
 		break;
 	}
-}
 
-void PacManSingleplayerScene::HandleGhosts(float deltaTime)
-{
-	for(auto ghost : mGhosts)
+	//Ghost player
+	auto ghostDir = mPlayerGhost->GetDirection();
+	std::shared_ptr<Tile> tile1;
+	switch (ghostDir)
 	{
-		auto gDir = ghost->GetComponent<AIComponent>()->GetInstruction();
-		std::shared_ptr<Tile> tile;
-		switch(gDir)
+	case Player::LEFT:
+		tile = mGrid->GetTiles().at(mGrid->GetTileLeftIdx(mPlayerGhost));
+		if (tile->GetType() != Tile::GhostWall && tile->GetType() != Tile::Wall)
 		{
-		case AIComponent::LEFT:
-			tile = mGrid->GetTiles().at(mGrid->GetTileLeftIdx(ghost));
-			if(tile->GetType() == Tile::Wall)
-			{
-				ghost->GetComponent<AIComponent>()->GenerateNewMoveInstruction();
-			}
-			else
-			{
-				ghost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
-			}
-			break;
-		case AIComponent::RIGHT:
-			tile = mGrid->GetTiles().at(mGrid->GetTileRightIdx(ghost));
-			if (tile->GetType() == Tile::Wall)
-			{
-				ghost->GetComponent<AIComponent>()->GenerateNewMoveInstruction();
-			}
-			else
-			{
-				ghost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
-			}
-			break;
-		case AIComponent::DOWN:
-			tile = mGrid->GetTiles().at(mGrid->GetTileDownIdx(ghost));
-			if (tile->GetType() == Tile::Wall)
-			{
-				ghost->GetComponent<AIComponent>()->GenerateNewMoveInstruction();
-			}
-			else
-			{
-				ghost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
-			}
-			break;
-		case AIComponent::UP:
-			tile = mGrid->GetTiles().at(mGrid->GetTileUpIdx(ghost));
-			if (tile->GetType() == Tile::Wall)
-			{
-				ghost->GetComponent<AIComponent>()->GenerateNewMoveInstruction();
-			}
-			else
-			{
-				ghost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
-			}
-			break;
-
+			mPlayerGhost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
 		}
+		break;
+	case Player::RIGHT:
+		tile = mGrid->GetTiles().at(mGrid->GetTileRightIdx(mPlayerGhost));
+		if (tile->GetType() != Tile::GhostWall && tile->GetType() != Tile::Wall)
+		{
+			mPlayerGhost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
+		}
+		break;
+	case Player::DOWN:
+		tile = mGrid->GetTiles().at(mGrid->GetTileDownIdx(mPlayerGhost));
+		if (tile->GetType() != Tile::GhostWall && tile->GetType() != Tile::Wall)
+		{
+			mPlayerGhost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
+		}
+		break;
+	case Player::UP:
+		tile = mGrid->GetTiles().at(mGrid->GetTileUpIdx(mPlayerGhost));
+		if (tile->GetType() != Tile::GhostWall && tile->GetType() != Tile::Wall)
+		{
+			mPlayerGhost->Move(tile->GetComponent<Transform>()->GetPosition(), deltaTime);
+		}
+		break;
 	}
 }
 
-void PacManSingleplayerScene::CheckForDeath()
+void VersusScene::CheckForDeath()
 {
 	if (mPacMan->IsAlive()) {
-	for(auto ghost : mGhosts)
-	{
-		if (mGrid->GetTileIdx(mPacMan) == mGrid->GetTileIdx(ghost) )
-		{
-			
+			if (mGrid->GetTileIdx(mPacMan) == mGrid->GetTileIdx(mPlayerGhost))
+			{
 				mPacMan->Die();
 			}
 		}
-	}
 }
 
-void PacManSingleplayerScene::HandleGameState() const
+void VersusScene::HandleGameState() const
 {
-	if(mPacMan->GetLives() < 0)
+	if (mPacMan->GetLives() < 0)
 	{
 		SDL_Quit();
 	}
 }
-
-
-

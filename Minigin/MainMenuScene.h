@@ -14,6 +14,7 @@ private:
 	std::shared_ptr<GameObject> mBackground;
 	std::shared_ptr<GameObject> mSinglePlayerIcon;
 	std::shared_ptr<GameObject> mMultiPlayerIcon;
+	std::shared_ptr<GameObject> mGhostIcon;
 	std::shared_ptr<GameObject> mFpsCounter;
 	std::shared_ptr<GameObject> mMenuText;
 

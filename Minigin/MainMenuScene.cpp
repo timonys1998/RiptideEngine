@@ -39,7 +39,7 @@ void MainMenuScene::Init()
 	mMultiPlayerIcon = std::make_shared<GameObject>();
 	mMultiPlayerIcon->AddComponent(std::make_shared<TextureComponent>("MultiPacMan.png"));
 	mMultiPlayerIcon->AddComponent(std::make_shared<RenderComponent>(mMultiPlayerIcon->GetComponent<TextureComponent>()->GetTexture()));
-	mMultiPlayerIcon->GetComponent<Transform>()->SetPosition(SCREEN_WIDTH / 1.5f, SCREEN_HEIGHT / 2);
+	mMultiPlayerIcon->GetComponent<Transform>()->SetPosition((SCREEN_WIDTH / 2) - 32.0f, SCREEN_HEIGHT / 2);
 	Add(mMultiPlayerIcon);
 
 
@@ -53,12 +53,13 @@ void MainMenuScene::Init()
 
 	mMenuText = std::make_shared<GameObject>();
 	mMenuText->AddComponent(std::make_shared<TextComponent>("Lingua.otf", 20, SDL_Color{ 200,155,15 }));
-	mMenuText->GetComponent<TextComponent>()->SetText("Press Space for singleplayer or Enter for multiplayer");
+	mMenuText->GetComponent<TextComponent>()->SetText("1: Singleplayer , 2: CO-OP, 3: Versus");
 	mMenuText->AddComponent(std::make_shared<RenderComponent>(mMenuText->GetComponent<TextComponent>()->GetTexture()));
-	mMenuText->GetComponent<Transform>()->SetPosition(SCREEN_WIDTH / 2 - 250.0f, SCREEN_HEIGHT / 2 + 50.0f);
+	mMenuText->GetComponent<Transform>()->SetPosition(SCREEN_WIDTH / 2 - 150.0f, SCREEN_HEIGHT / 2 + 50.0f);
 	mMenuText->AddComponent(std::make_shared<InputComponent>());
-	mMenuText->GetComponent<InputComponent>()->AddInput(InputComponent::Button::SPACE, std::make_shared<SelectMode>("PacManSinglePlayer"));
-	mMenuText->GetComponent<InputComponent>()->AddInput(InputComponent::Button::ENTER, std::make_shared<SelectMode>("PacManMultiPlayer"));
+	mMenuText->GetComponent<InputComponent>()->AddInput(InputComponent::Button::NUM1, std::make_shared<SelectMode>("PacManSinglePlayer"));
+	mMenuText->GetComponent<InputComponent>()->AddInput(InputComponent::Button::NUM2, std::make_shared<SelectMode>("PacManMultiPlayer"));
+	mMenuText->GetComponent<InputComponent>()->AddInput(InputComponent::Button::NUM3, std::make_shared<SelectMode>("VersusScene"));
 	Add(mMenuText);
 	
 }

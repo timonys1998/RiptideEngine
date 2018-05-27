@@ -37,11 +37,14 @@ bool InputManager::IsPressed(InputComponent::Button button) const
 	case InputComponent::Button::LEFTARROW:
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)return true;
 		return false;
-	case InputComponent::Button::SPACE:
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)return true;
+	case InputComponent::Button::NUM1:
+		if (GetAsyncKeyState(SDLK_1) & 0x8000)return true;
 		return false;
-	case InputComponent::Button::ENTER:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000)return true;
+	case InputComponent::Button::NUM2:
+		if (GetAsyncKeyState(SDLK_2) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::NUM3:
+		if (GetAsyncKeyState(SDLK_3) & 0x8000)return true;
 		return false;
 	default: return false;
 	}

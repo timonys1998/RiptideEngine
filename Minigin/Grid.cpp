@@ -4,10 +4,10 @@
 #include "Pill.h"
 
 
-Grid::Grid(const std::string& levelName, const std::shared_ptr<GameObject> player,int width)
+Grid::Grid(const std::string& levelName,int width, std::vector<std::shared_ptr<GameObject>> objectsOnGrid)
 	:mLevelName(levelName)
-	,mPlayer(player)
 	,mGridWidth(width)
+	,mObjectsOnGrid(objectsOnGrid)
 {
 	Init();
 	
@@ -49,44 +49,48 @@ void Grid::Init()
 	}
 
 	
-	mPlayer->Init();
-	AddChild(mPlayer);
+	for(auto o : mObjectsOnGrid)
+	{
+		o->Init();
+		AddChild(o);
+	}
+	
 
 }
 
-int Grid::GetRow() const
+int Grid::GetRow(std::shared_ptr<GameObject> toTrack) const
 {
-	return int(mPlayer->GetComponent<Transform>()->GetPosition().y) / TILESIZE;
+	return int(toTrack->GetComponent<Transform>()->GetPosition().y) / TILESIZE;
 }
 
-int Grid::GetColumn() const
+int Grid::GetColumn(std::shared_ptr<GameObject> toTrack) const
 {
-	return int(mPlayer->GetComponent<Transform>()->GetPosition().x) / TILESIZE;
+	return int(toTrack->GetComponent<Transform>()->GetPosition().x) / TILESIZE;
 }
 
-int Grid::GetTileIdx() const
+int Grid::GetTileIdx(std::shared_ptr<GameObject> toTrack) const
 {
-	return GetRow() * mAmtOfRows + GetColumn();
+	return GetRow(toTrack) * mAmtOfRows + GetColumn(toTrack);
 }
 
-int Grid::GetTileLeftIdx() const
+int Grid::GetTileLeftIdx(std::shared_ptr<GameObject> toTrack) const
 {
-	return GetRow() * mAmtOfRows + (GetColumn() - 1);
+	return GetRow(toTrack) * mAmtOfRows + (GetColumn(toTrack) - 1);
 }
 
-int Grid::GetTileRightIdx() const
+int Grid::GetTileRightIdx(std::shared_ptr<GameObject> toTrack) const
 {
-	return GetRow() * mAmtOfRows + (GetColumn() + 1);
+	return GetRow(toTrack) * mAmtOfRows + (GetColumn(toTrack) + 1);
 }
 
-int Grid::GetTileUpIdx() const
+int Grid::GetTileUpIdx(std::shared_ptr<GameObject> toTrack) const
 {
-	return (GetRow() - 1) * mAmtOfRows + GetColumn();
+	return (GetRow(toTrack) - 1) * mAmtOfRows + GetColumn(toTrack);
 }
 
-int Grid::GetTileDownIdx() const
+int Grid::GetTileDownIdx(std::shared_ptr<GameObject> toTrack) const
 {
-	return (GetRow() + 1) * mAmtOfRows + GetColumn();
+	return (GetRow(toTrack) + 1) * mAmtOfRows + GetColumn(toTrack);
 }
 
 void Grid::Parse(const std::string& line)

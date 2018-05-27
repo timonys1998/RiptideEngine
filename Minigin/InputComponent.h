@@ -19,8 +19,9 @@ public:
 		UPARROW,
 		DOWNARROW,
 		RIGHTARROW,
-		ENTER,
-		SPACE
+		NUM1,
+		NUM2,
+		NUM3
 	};
 
 	explicit InputComponent();

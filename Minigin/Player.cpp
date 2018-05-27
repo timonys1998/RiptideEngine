@@ -46,12 +46,38 @@ void Player::SetDirection(Dir direction)
 	mDirection = direction;
 }
 
-void Player::Move(glm::vec2 currentPos, glm::vec2 futurePos,float deltaTime)
+void Player::Move( glm::vec2 futurePos,float deltaTime)
 {
-	mMoveTimer = 0.0f;
-	mMoveTimer += deltaTime;
-	if (mMoveTimer > 1.0f) mMoveTimer = 0.0f;
-	auto pos = Lerp(currentPos, futurePos, mMoveTimer);
-	GetComponent<Transform>()->SetPosition(pos.x, pos.y);
-	mMoveTimer = 0.0f;
+	if(mGoToNext)
+	{
+		mGoToNext = false;
+		mCurrentPos = GetComponent<Transform>()->GetPosition();
+		mFuturePos = futurePos;
+	}
+		auto pos = Lerp(mCurrentPos, mFuturePos, mMoveTimer);
+		mMoveTimer += deltaTime;
+		GetComponent<Transform>()->SetPosition(pos.x, pos.y);
+	if(mMoveTimer >= 1.0f)
+	{
+		mMoveTimer = 0.0f;
+		mGoToNext = true;
+	}
+}
+
+void Player::Die()
+{
+	mIsAlive = false;
+	--mLives;
+	mGoToNext = false;
+	GetComponent<RenderComponent>()->EnableRendering(false);
+	if(mLives >= 0)
+		Respawn();
+}
+
+void Player::Respawn() 
+{
+	GetComponent<Transform>()->SetPosition(320, 352);
+	GetComponent<RenderComponent>()->EnableRendering(true);
+	mIsAlive = true;
+	mGoToNext = true;
 }
