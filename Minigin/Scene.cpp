@@ -1,31 +1,55 @@
 #include "MiniginPCH.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "RenderComponent.h"
+#include "TextureComponent.h"
+#include "TextComponent.h"
 
-unsigned int dae::Scene::idCounter = 0;
+unsigned int Scene::idCounter = 0;
 
-dae::Scene::Scene(const std::string& name) : mName(name) {}
+Scene::Scene(const std::string& name) : mName(name) {}
 
-dae::Scene::~Scene() = default;
+Scene::~Scene() = default;
 
-void dae::Scene::Add(const std::shared_ptr<GameObject>& object)
+void Scene::Add(const std::shared_ptr<GameObject>& object)
 {
 	mObjects.push_back(object);
 }
 
-void dae::Scene::Update()
+void Scene::Update(float deltaTime)
 {
 	for(auto gameObject : mObjects)
 	{
-		gameObject->Update();
+		gameObject->Update(deltaTime);
+		gameObject->ObjectUpdate(deltaTime);
+	}
+	SceneUpdate(deltaTime);
+}
+
+void Scene::Render() const
+{
+	for (const auto gameObject : GetObjects())
+	{
+		const std::shared_ptr<RenderComponent> temp = gameObject->GetComponent<RenderComponent>();
+		if (temp != nullptr && temp->ShouldRender() && gameObject->GetComponent<RenderComponent>()->GetTextureToRender() != nullptr)
+		{
+			temp->RenderTexture();
+		}
+		for(const auto child : gameObject->GetChildren())
+		{
+			const std::shared_ptr<RenderComponent> temp1 = child->GetComponent<RenderComponent>();
+			if (temp1 != nullptr && temp1->ShouldRender() && temp1->GetTextureToRender() != nullptr)
+			{
+				temp1->RenderTexture();
+			}
+
+		}
 	}
 }
 
-void dae::Scene::Render() const
+void Scene::SceneRender() const
 {
-	for (const auto gameObject : mObjects)
-	{
-		gameObject->Render();
-	}
 }
+
+
 

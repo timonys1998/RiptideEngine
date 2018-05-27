@@ -7,13 +7,13 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include <SDL.h>
-#include "TextObject.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "MainMenuScene.h"
+#include "PacManSingleplayerScene.h"
 
 
-void dae::Minigin::Initialize()
+void Minigin::Initialize()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
 	{
@@ -24,8 +24,8 @@ void dae::Minigin::Initialize()
 		"Programming 4 assignment",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		640,
-		480,
+		SCREEN_WIDTH,
+		SCREEN_HEIGHT,
 		SDL_WINDOW_OPENGL
 	);
 	if (window == nullptr) 
@@ -39,15 +39,14 @@ void dae::Minigin::Initialize()
 /**
  * Code constructing the scene world starts here
  */
-void dae::Minigin::LoadGame() const
+void Minigin::LoadGame() const
 {
-	//auto scene = std::make_shared<Sc>(MainMenuScene());
 	SceneManager::GetInstance().CreateScene(std::make_shared<MainMenuScene>());
+	SceneManager::GetInstance().CreateScene(std::make_shared<PacManSingleplayerScene>());
 	SceneManager::GetInstance().SetActiveScene("MainMenu");
-	
 }
 
-void dae::Minigin::Cleanup()
+void Minigin::Cleanup()
 {
 	Renderer::GetInstance().Destroy();
 	SDL_DestroyWindow(window);
@@ -55,7 +54,7 @@ void dae::Minigin::Cleanup()
 	SDL_Quit();
 }
 
-void dae::Minigin::Run()
+void Minigin::Run()
 {
 	Initialize();
 
@@ -76,14 +75,17 @@ void dae::Minigin::Run()
 		while (doContinue)
 		{
 			auto currentTime = std::chrono::high_resolution_clock::now();
-			//auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+			auto deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
+
 			doContinue = input.ProcessInput();
 
-			sceneManager.Update();
+			sceneManager.Update(deltaTime);
 			renderer.Render();
 
 			lastTime = currentTime;
+			if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)doContinue = false;
 		}
+		
 	}
 
 	Cleanup();

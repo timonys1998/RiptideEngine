@@ -1,8 +1,6 @@
 #pragma once
 #include <SDL_ttf.h>
 
-namespace dae
-{
 	class Font
 	{
 	public:
@@ -19,4 +17,3 @@ namespace dae
 		unsigned int mSize;
 	};
 
-}

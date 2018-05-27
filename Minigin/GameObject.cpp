@@ -3,40 +3,36 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 #include "BaseComponent.h"
+#include "TextureComponent.h"
+#include "algorithm"
 
-dae::GameObject::GameObject()
+GameObject::GameObject()
 {
 	mComponents.push_back(mTransform);
 }
 
-void dae::GameObject::Init()
+void GameObject::Init()
 {
 	
 }
 
 
-dae::GameObject::~GameObject() = default;
+GameObject::~GameObject() = default;
 
-void dae::GameObject::Update()
+void GameObject::Update(float deltaTime)
 {
 	for(auto c : mComponents)
 	{
-		c->Update();
+		c->Update(deltaTime);
+	}
+	for(auto c : mChildren)
+	{
+		c->Update(deltaTime);
 	}
 }
 
-void dae::GameObject::Render() const
-{
-	const auto pos = mTransform->GetPosition();
-	Renderer::GetInstance().RenderTexture(*mTexture, pos.x, pos.y);
-}
 
-void dae::GameObject::SetTexture(const std::string& filename)
-{
-	mTexture = ResourceManager::GetInstance().LoadTexture(filename);
-}
-
-void dae::GameObject::AddComponent(std::shared_ptr<BaseComponent> component)
+void GameObject::AddComponent(std::shared_ptr<BaseComponent> component)
 {
 	if(typeid(component) == typeid(Transform))
 	{
@@ -45,21 +41,31 @@ void dae::GameObject::AddComponent(std::shared_ptr<BaseComponent> component)
 	}
 	for(auto comp : mComponents )
 	{
-		if(component == comp)
+		if(typeid(component) == typeid(comp))
 		{
 			std::cout << "GameObject::AddComponent >> Cannot add a component already on the gameobject \n";
 		}
 	}
 	mComponents.push_back(component);
-	//component->mOwner = this;
+	component->mOwner = shared_from_this();
 }
 
 
 
-//void dae::GameObject::RemoveComponent(const BaseComponent& component)
-//{
-//
-//	//mComponents.erase(std::remove(mComponents.begin(), mComponents.end(), component), mComponents.end());
-//}
+void GameObject::RemoveComponent(std::shared_ptr<BaseComponent> component)
+{
+
+	mComponents.erase(std::remove(mComponents.begin(), mComponents.end(), component), mComponents.end());
+}
+
+void GameObject::AddChild(std::shared_ptr<GameObject> child)
+{
+	mChildren.push_back(child);
+}
+
+void GameObject::RemoveChild(std::shared_ptr<GameObject> child)
+{
+	mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), child), mChildren.end());
+}
 
 

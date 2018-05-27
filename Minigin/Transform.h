@@ -6,8 +6,6 @@
 #include "../Minigin/BaseComponent.h"
 #pragma warning(pop)
 
-namespace dae
-{
 	class Transform final : public BaseComponent
 	{
 		glm::mat3x3 transform{1,0,0,
@@ -17,11 +15,11 @@ namespace dae
 		glm::vec2 GetPosition() const { return glm::vec2{transform[0][2],transform[1][2]} ; }
 		explicit Transform();
 		 ~Transform();
-		void Update() override
+		void Update(float deltaTime) override
 		{
-			return;
+			UNREFERENCED_PARAMETER(deltaTime);
 		};
 		void SetPosition(float x, float y);
 		void translate(float x, float y);
 	};
-}
+

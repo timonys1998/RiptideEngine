@@ -4,29 +4,21 @@
 #include <algorithm>
 
 
-void dae::SceneManager::Update()
+void SceneManager::Update(float deltaTime)
 {
 	if (mActiveScene)
-		mActiveScene->Update();
+		mActiveScene->Update(deltaTime);
 	else
 		std::cout << "No scene set as active scene \n";
 }
 
-void dae::SceneManager::Render()
-{
-	if (mActiveScene)
-		mActiveScene->Render();
-	else
-		std::cout << "No scene set as active scene \n";
 
-}
-
-void dae::SceneManager::CreateScene(std::shared_ptr<Scene> gameScene)
+void SceneManager::CreateScene(std::shared_ptr<Scene> gameScene)
 {
 	mScenes.push_back(gameScene);
 }
 
-void dae::SceneManager::SetActiveScene(const std::string name)
+void SceneManager::SetActiveScene(const std::string name)
 {
 	auto it = find_if(mScenes.begin(),mScenes.end(),[name](std::shared_ptr<Scene> scene)
 	{

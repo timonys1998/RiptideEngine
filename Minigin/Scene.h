@@ -2,8 +2,6 @@
 #include "SceneManager.h"
 #include "GameObject.h"
 
-namespace dae
-{
 	class SceneObject;
 	class Scene
 	{
@@ -15,8 +13,10 @@ namespace dae
 		const std::vector<std::shared_ptr<GameObject>> GetObjects() const { return mObjects; }
 
 		virtual void Init() = 0;
-		virtual void Update() = 0;
-		virtual void Render() const = 0;
+		virtual void Update(float deltaTime);
+		virtual void Render() const;
+		virtual void SceneRender()const;
+		virtual void SceneUpdate(float deltaTime) = 0;
 		
 		explicit Scene(const std::string& name);
 		virtual ~Scene();
@@ -32,4 +32,3 @@ namespace dae
 		static unsigned int idCounter; 
 	};
 
-}

@@ -1,41 +1,48 @@
 #include "MiniginPCH.h"
 #include "InputManager.h"
 #include <SDL.h>
+#include "InputComponent.h"
+#include <cassert>
 
 
-bool dae::InputManager::ProcessInput()
+bool InputManager::ProcessInput()
 {
 	ZeroMemory(&currentState, sizeof(XINPUT_STATE));
 	XInputGetState(0, &currentState);
-
-	SDL_Event e;
-	while (SDL_PollEvent(&e)) {
-		if (e.type == SDL_QUIT) {
-			return false;
-		}
-		if (e.type == SDL_KEYDOWN) {
-			
-		}
-		if (e.type == SDL_MOUSEBUTTONDOWN) {
-			
-		}
-	}
-
+	
 	return true;
 }
 
-bool dae::InputManager::IsPressed(ControllerButton button) const
+bool InputManager::IsPressed(InputComponent::Button button) const
 {
-	switch (button)
+	switch(button)
 	{
-	case ControllerButton::ButtonA:
-		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
-	case ControllerButton::ButtonB:
-		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_B;
-	case ControllerButton::ButtonX:
-		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_X;
-	case ControllerButton::ButtonY:
-		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
+	case InputComponent::Button::DPAD_UP:
+		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP;
+	case InputComponent::Button::DPAD_DOWN:
+		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
+	case InputComponent::Button::DPAD_RIGHT:
+		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
+	case InputComponent::Button::DPAD_LEFT:
+		return currentState.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
+	case InputComponent::Button::UPARROW:
+		if (GetAsyncKeyState(VK_UP) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::DOWNARROW:
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::RIGHTARROW:
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::LEFTARROW:
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::SPACE:
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)return true;
+		return false;
+	case InputComponent::Button::ENTER:
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000)return true;
+		return false;
 	default: return false;
 	}
 }

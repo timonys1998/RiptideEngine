@@ -1,8 +1,6 @@
 #pragma once
 struct SDL_Texture;
 
-namespace dae
-{
 	class Texture2D
 	{
 	public:
@@ -17,4 +15,4 @@ namespace dae
 	private:
 		SDL_Texture* mTexture;
 	};
-}
+

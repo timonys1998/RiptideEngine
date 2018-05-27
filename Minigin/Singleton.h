@@ -1,6 +1,5 @@
 #pragma once
-namespace dae
-{
+
 	template <typename T>
 	class Singleton
 	{
@@ -20,4 +19,3 @@ namespace dae
 	protected:
 		Singleton() = default;
 	};
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "Singleton.h"
 
-namespace dae
-{
 	class Texture2D;
 	class Font;
 	class ResourceManager final : public Singleton<ResourceManager>
@@ -17,4 +15,4 @@ namespace dae
 		std::shared_ptr<Font> LoadFont(const std::string& file, unsigned int size);
 	};
 
-}
+

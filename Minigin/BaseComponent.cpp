@@ -3,11 +3,11 @@
 #include "GameObject.h"
 
 
-dae::BaseComponent::BaseComponent()
+BaseComponent::BaseComponent()
 {
 }
 
 
-dae::BaseComponent::~BaseComponent()
+BaseComponent::~BaseComponent()
 {
 }

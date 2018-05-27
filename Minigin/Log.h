@@ -1,8 +1,7 @@
 #pragma once
 #include <streambuf>
 
-namespace dae
-{
+
 	class DebugStreambuf : public std::streambuf 
 	{
 	public:
@@ -31,4 +30,4 @@ namespace dae
 	Cout2VisualStudioDebugOutput c2v;
 #endif
 #endif
-}
+

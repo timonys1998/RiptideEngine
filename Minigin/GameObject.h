@@ -2,52 +2,56 @@
 #include <memory>
 
 #include "Transform.h"
-#include "Texture2D.h"
 
 class BaseComponent;
 
-namespace dae
-{
-	class GameObject
+
+	class GameObject : public std::enable_shared_from_this<GameObject>
 	{
 	public:
-		void Init();
-		void Update();
-		void Render() const ;
+		virtual void Init();
+		void Update(float deltaTime);
+		virtual void ObjectUpdate(float deltaTime) { UNREFERENCED_PARAMETER(deltaTime); };
 	
-		void SetTexture(const std::string& filename);//Will be done with texture component
-
 		void AddComponent(std::shared_ptr<BaseComponent> component);
-		//void RemoveComponent(const BaseComponent& component);
+		void RemoveComponent(std::shared_ptr<BaseComponent> component);
+		void AddChild(std::shared_ptr<GameObject> child);
+		void RemoveChild(std::shared_ptr<GameObject> child);
+		const std::vector<std::shared_ptr<GameObject>> GetChildren() const { return mChildren; }
 
-
-		GameObject();
+		explicit GameObject();
 		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
-		//Templated functions
+		
 		template<class T>
 		std::shared_ptr<T> GetComponent()
 		{
-			for(auto comp : mComponents)
+			for (const auto comp : mComponents)
 			{
 				//We dont check for nullptr cause the component should not be in the vector if its nullptr / We only check if its the type
-				if(std::dynamic_pointer_cast<T>(comp))
+				if (typeid(*comp) == typeid(T))
 				{
 					std::cout << "Component found \n";
-					return std::dynamic_pointer_cast<T>(comp);
+					return std::static_pointer_cast<T>(comp);
 				}
 			}
 			return nullptr;
 		}
 
+		template<class T>
+		bool HasComponent()
+		{
+			return GetComponent<T>() != nullptr;
+		}
+
+		
+
 	private:
-		friend class BaseComponent;
 		std::shared_ptr<Transform> mTransform = std::make_shared<Transform>();
-		std::shared_ptr<Texture2D> mTexture;
 		std::vector<std::shared_ptr<BaseComponent>> mComponents;
+		std::vector<std::shared_ptr<GameObject>> mChildren;
 	};
-}
