@@ -79,8 +79,8 @@ void PacManSingleplayerScene::SceneUpdate(float deltaTime)
 	mLifeCounter->GetComponent<RenderComponent>()->ChangeRenderingTexture(mLifeCounter->GetComponent<TextComponent>()->GetTexture());
 
 	HandleGameState();
-	HandlePacMan(deltaTime);
 	HandleGhosts(deltaTime);
+	HandlePacMan(deltaTime);
 	CheckForDeath();
 }
 

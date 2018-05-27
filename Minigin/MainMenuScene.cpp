@@ -42,6 +42,12 @@ void MainMenuScene::Init()
 	mMultiPlayerIcon->GetComponent<Transform>()->SetPosition((SCREEN_WIDTH / 2) - 32.0f, SCREEN_HEIGHT / 2);
 	Add(mMultiPlayerIcon);
 
+	mGhostIcon = std::make_shared<GameObject>();
+	mGhostIcon->AddComponent(std::make_shared<TextureComponent>("Ghost.png"));
+	mGhostIcon->AddComponent(std::make_shared<RenderComponent>(mGhostIcon->GetComponent<TextureComponent>()->GetTexture()));
+	mGhostIcon->GetComponent<Transform>()->SetPosition((SCREEN_WIDTH / 1.5f) , SCREEN_HEIGHT / 2);
+	Add(mGhostIcon);
+
 
 	mFpsCounter = std::make_shared<GameObject>();
 	mFpsCounter->AddComponent(std::make_shared<TextComponent>("Lingua.otf",20,SDL_Color{200,155,15}));
